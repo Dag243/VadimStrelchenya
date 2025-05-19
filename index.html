@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Галерея художественных работ</title>
+    <style>
+        /* Основные стили */
+        :root {
+            --primary-color: #5a67d8;
+            --secondary-color: #4c51bf;
+            --accent-color: #667eea;
+            --text-color: #2d3748;
+            --light-bg: #f8fafc;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+            scroll-behavior: smooth;
+            /* Добавляем плавную прокрутку для всего документа */
+        }
+
+        /* Шапка сайта */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: var(--card-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        /* Основной контент */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* Сетка картин */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        /* Карточка картины */
+        .art-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .art-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .art-image {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            padding-top: 100%;
+            /* Соотношение 1:1 по умолчанию */
+        }
+
+        .art-image img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: var(--transition);
+        }
+
+        /* Классы для разных соотношений сторон */
+        .art-image.portrait {
+            padding-top: 140%;
+            /* Для вертикальных изображений */
+        }
+
+        .art-image.landscape {
+            padding-top: 75%;
+            /* Для горизонтальных изображений */
+        }
+
+        .art-card:hover .art-image img {
+            transform: scale(1.05);
+        }
+
+        .art-info {
+            padding: 1rem;
+            flex-shrink: 0;
+        }
+
+        .art-title {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .art-price {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .art-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        /* Кнопки */
+        .btn {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        /* Страница картины */
+        .painting-detail {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            margin-top: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .painting-detail.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .painting-image {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .painting-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .painting-info h1 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .painting-price {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            font-weight: 700;
+            margin: 1rem 0;
+        }
+
+        .painting-description {
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+
+        .painting-meta {
+            margin-bottom: 1.5rem;
+        }
+
+        .meta-item {
+            display: flex;
+            margin-bottom: 0.5rem;
+        }
+
+        .meta-label {
+            font-weight: 600;
+            width: 120px;
+        }
+
+        /* Форма заказа */
+        .order-form {
+            max-width: 500px;
+            margin: 2rem auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+        }
+
+        /* Анимация загрузки */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .painting-detail {
+                grid-template-columns: 1fr;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Шапка сайта -->
+    <header>
+        <div class="header-container">
+            <div class="logo">АртГалерея</div>
+        </div>
+    </header>
+
+    <!-- Главная страница -->
+    <div class="container" id="home-page">
+        <h1>Коллекция картин</h1>
+        <p>Авторские работы профессионального художника</p>
+
+        <div class="gallery-grid" id="gallery">
+            <!-- Картины будут загружены через JavaScript -->
+        </div>
+    </div>
+
+    <!-- Страница картины (скрыта по умолчанию) -->
+    <div class="container" id="painting-page" style="display: none;">
+        <a href="#" class="btn" id="back-btn">← Назад в каталог</a>
+
+        <div class="painting-detail" id="painting-detail">
+            <!-- Данные будут загружены через JavaScript -->
+        </div>
+    </div>
+
+    <!-- Страница заказа (скрыта по умолчанию) -->
+    <div class="container" id="order-page" style="display: none;">
+        <a href="#" class="btn" id="back-btn-order">← Назад</a>
+
+        <div class="order-form">
+            <h2>Оформление заказа</h2>
+            <p id="order-painting-title"></p>
+
+            <form id="order-form">
+                <div class="form-group">
+                    <label for="name">Ваше имя</label>
+                    <input type="text" id="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Телефон</label>
+                    <input type="tel" id="phone" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Адрес доставки</label>
+                    <input type="text" id="address" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Дополнительные пожелания</label>
+                    <textarea id="message"></textarea>
+                </div>
+
+                <button type="submit" class="btn">Подтвердить заказ</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Данные о картинах (можно заменить на загрузку из JSON-файла)
+        const paintings = [
+            {
+                id: 1,
+                title: "Рассвет в горах",
+                image: "painting1.jpg",
+                price: 12500,
+                year: 2023,
+                size: "50×70 см",
+                technique: "Масло",
+                description: "Вдохновляющий пейзаж с теплыми тонами восхода в горной местности. Картина передает ощущение утренней свежести и спокойствия.",
+                orientation: "portrait" // вертикальная
+            },
+            {
+                id: 2,
+                title: "Осенний лес",
+                image: "photo_2025-05-17_15-03-25.jpg",
+                price: 9800,
+                year: 2022,
+                size: "40×60 см",
+                technique: "Акрил",
+                description: "Яркие осенние краски в густом лесу. Игра света и тени создает ощущение движения листьев на ветру.",
+                orientation: "landscape" // горизонтальная
+            },
+            {
+                id: 3,
+                title: "Морской бриз",
+                image: "photo_2025-05-17_15-03-32.jpg",
+                price: 15600,
+                year: 2023,
+                size: "60×80 см",
+                technique: "Масло",
+                description: "Морской пейзаж с волнами, разбивающимися о скалы. Передает мощь и красоту океана.",
+                orientation: "landscape"
+            },
+            {
+                id: 4,
+                title: "Портрет девушки",
+                image: "photo_2025-05-17_15-03-34.jpg",
+                price: 18700,
+                year: 2024,
+                size: "40×50 см",
+                technique: "Акрил",
+                description: "Выразительный портрет с глубоким взглядом. Работа выполнена в теплых тонах.",
+                orientation: "portrait"
+            },
+            {
+                id: 5,
+                title: "Городские огни",
+                image: "photo_2025-05-17_15-03-40.jpg",
+                price: 14200,
+                year: 2023,
+                size: "50×50 см",
+                technique: "Масло",
+                description: "Ночной городской пейзаж с яркими огнями и отражениями в воде.",
+                orientation: "square" // квадратная
+            },
+            {
+                id: 6,
+                title: "пуля",
+                image: "photo_2025-05-17_15-03-43.jpg",
+                price: 11500,
+                year: 2022,
+                size: "60×40 см",
+                technique: "Акрил",
+                description: "Буйство красок весеннего сада с множеством цветов.",
+                orientation: "portrait"
+            },
+            {
+                id: 7,
+                title: "Горная река",
+                image: "photo_2025-05-17_15-03-49.jpg",
+                price: 13400,
+                year: 2023,
+                size: "70×50 см",
+                technique: "Масло",
+                description: "Быстрая горная река среди скал и деревьев.",
+                orientation: "landscape"
+            },
+            {
+                id: 8,
+                title: "Натюрморт с фруктами",
+                image: "photo_2025-05-17_15-03-55.jpg",
+                price: 9800,
+                year: 2022,
+                size: "40×40 см",
+                technique: "Акрил",
+                description: "Классический натюрморт с сочными фруктами и вазой.",
+                orientation: "square"
+            },
+            {
+                id: 9,
+                title: "Зимний вечер",
+                image: "photo_2025-05-17_15-03-58.jpg",
+                price: 12700,
+                year: 2023,
+                size: "50×70 см",
+                technique: "Масло",
+                description: "Тихий зимний вечер с падающим снегом и теплым светом из окон.",
+                orientation: "portrait"
+            },
+            {
+                id: 10,
+                title: "Поле подсолнухов",
+                image: "painting10.jpg",
+                price: 15300,
+                year: 2024,
+                size: "80×60 см",
+                technique: "Масло",
+                description: "Бескрайнее поле подсолнухов под ярким летним солнцем.",
+                orientation: "landscape"
+            },
+            {
+                id: 11,
+                title: "ромет",
+                image: "photo_2025-05-17_15-04-01.jpg",
+                price: 16500,
+                year: 2024,
+                size: "60×60 см",
+                technique: "Акрил",
+                description: "Яркая абстрактная композиция с динамичными линиями.",
+                orientation: "square"
+            },
+            {
+                id: 12,
+                title: "Африканка",
+                image: "53.5 на 84.5.jpg",
+                price: 11800,
+                year: 2023,
+                size: "50×70 см",
+                technique: "Масло",
+                description: "Представительница диких племен.",
+                orientation: "portrait"
+            }
+        ];
+
+        // Элементы страницы
+        const homePage = document.getElementById('home-page');
+        const paintingPage = document.getElementById('painting-page');
+        const orderPage = document.getElementById('order-page');
+        const gallery = document.getElementById('gallery');
+        const paintingDetail = document.getElementById('painting-detail');
+        const orderForm = document.getElementById('order-form');
+        const orderPaintingTitle = document.getElementById('order-painting-title');
+        const backBtn = document.getElementById('back-btn');
+        const backBtnOrder = document.getElementById('back-btn-order');
+
+        // Текущая выбранная картина для заказа
+        let currentPaintingId = null;
+
+        // Заполняем галерею картинами
+        function renderGallery() {
+            gallery.innerHTML = '';
+            paintings.forEach(painting => {
+                const artCard = document.createElement('div');
+                artCard.className = 'art-card';
+
+                // Добавляем класс в зависимости от ориентации
+                const imageClass = painting.orientation === 'portrait' ? 'portrait' :
+                    painting.orientation === 'landscape' ? 'landscape' : '';
+
+                artCard.innerHTML = `
+                    <div class="art-image ${imageClass}">
+                        <img src="images/${painting.image}" alt="${painting.title}">
+                    </div>
+                    <div class="art-info">
+                        <h3 class="art-title">${painting.title}</h3>
+                        <div class="art-price">${painting.price.toLocaleString()} ₽</div>
+                        <div class="art-meta">
+                            <span>${painting.year}</span>
+                            <span>${painting.size}</span>
+                        </div>
+                    </div>
+                `;
+                artCard.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showPainting(painting.id);
+
+                    // Плавная прокрутка к деталям картины
+                    setTimeout(() => {
+                        paintingDetail.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }, 100);
+                });
+                gallery.appendChild(artCard);
+            });
+        }
+
+        // Показываем страницу картины
+        function showPainting(id) {
+            const painting = paintings.find(p => p.id === id);
+            if (painting) {
+                paintingDetail.innerHTML = `
+                    <div class="painting-image">
+                        <img src="images/${painting.image}" alt="${painting.title}">
+                    </div>
+                    <div class="painting-info">
+                        <h1>${painting.title}</h1>
+                        <div class="painting-price">${painting.price.toLocaleString()} ₽</div>
+                        
+                        <div class="painting-meta">
+                            <div class="meta-item">
+                                <span class="meta-label">Год создания:</span>
+                                <span>${painting.year}</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-label">Размер:</span>
+                                <span>${painting.size}</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-label">Техника:</span>
+                                <span>${painting.technique}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="painting-description">
+                            <p>${painting.description}</p>
+                        </div>
+                        
+                        <button class="btn" id="order-btn">Заказать</button>
+                    </div>
+                `;
+
+                document.getElementById('order-btn').addEventListener('click', () => showOrderForm(painting.id));
+
+                homePage.style.display = 'none';
+                paintingPage.style.display = 'block';
+                orderPage.style.display = 'none';
+                currentPaintingId = id;
+
+                // Добавляем анимацию появления
+                setTimeout(() => {
+                    paintingDetail.classList.add('visible');
+                }, 50);
+            }
+        }
+
+        // Показываем форму заказа
+        function showOrderForm(id) {
+            const painting = paintings.find(p => p.id === id);
+            if (painting) {
+                orderPaintingTitle.textContent = `Вы заказываете: ${painting.title}`;
+                currentPaintingId = id;
+
+                homePage.style.display = 'none';
+                paintingPage.style.display = 'none';
+                orderPage.style.display = 'block';
+
+                // Плавная прокрутка к верху формы заказа
+                setTimeout(() => {
+                    orderPage.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }, 100);
+            }
+        }
+
+        // Возвращаемся в каталог
+        backBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            homePage.style.display = 'block';
+            paintingPage.style.display = 'none';
+            orderPage.style.display = 'none';
+
+            // Плавная прокрутка к началу страницы
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Возвращаемся к картине из формы заказа
+        backBtnOrder.addEventListener('click', (e) => {
+            e.preventDefault();
+            homePage.style.display = 'none';
+            paintingPage.style.display = 'block';
+            orderPage.style.display = 'none';
+
+            // Плавная прокрутка к деталям картины
+            setTimeout(() => {
+                paintingDetail.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }, 100);
+        });
+
+        // Обработка формы заказа
+        orderForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const painting = paintings.find(p => p.id === currentPaintingId);
+            if (!painting) return;
+
+            const formData = {
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value,
+                address: document.getElementById('address').value,
+                message: document.getElementById('message').value,
+                painting: painting.title,
+                price: painting.price
+            };
+
+            try {
+                // Отправка данных в Telegram бот
+                const botToken = '8193169651:AAFZJByl-XM3Vl4jSJy2I7XZvkw-e_CVKj4';
+                const chatId = '1957216095';
+
+                const text = `Новый заказ!\n\n` +
+                    `Картина: ${formData.painting}\n` +
+                    `Цена: ${formData.price} ₽\n` +
+                    `Имя: ${formData.name}\n` +
+                    `Телефон: ${formData.phone}\n` +
+                    `Email: ${formData.email}\n` +
+                    `Адрес: ${formData.address}\n` +
+                    `Сообщение: ${formData.message || 'нет'}`;
+
+                const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: chatId,
+                        text: text
+                    })
+                });
+
+                if (response.ok) {
+                    alert('Спасибо за заказ! Мы свяжемся с вами для уточнения деталей.');
+                } else {
+                    alert('Произошла ошибка при отправке заказа. Пожалуйста, попробуйте позже.');
+                }
+            } catch (error) {
+                console.error('Ошибка при отправке заказа:', error);
+                alert('Произошла ошибка при отправке заказа. Пожалуйста, попробуйте позже.');
+            }
+
+            // Возвращаемся на главную
+            homePage.style.display = 'block';
+            paintingPage.style.display = 'none';
+            orderPage.style.display = 'none';
+
+            // Очищаем форму
+            orderForm.reset();
+
+            // Плавная прокрутка к началу страницы
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Инициализация галереи
+        renderGallery();
+    </script>
+</body>
+
+</html>

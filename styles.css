@@ -1,0 +1,64 @@
+.painting-detail {
+    display: flex;
+    max-width: 1200px;
+    margin: 2rem auto;
+    gap: 3rem;
+    padding: 1rem;
+}
+
+.painting-image {
+    flex: 1;
+}
+
+.painting-image img {
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.painting-info {
+    flex: 1;
+}
+
+.painting-info h2 {
+    font-size: 2rem;
+    margin-top: 0;
+}
+
+.meta {
+    color: #aaa;
+    font-size: 0.9rem;
+}
+
+.description {
+    line-height: 1.6;
+    margin: 1.5rem 0;
+}
+
+.price {
+    font-size: 1.5rem;
+    color: var(--accent-color);
+    font-weight: bold;
+}
+
+.order-btn {
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.order-btn:hover {
+    background: #ff5252;
+}
+
+.back-link {
+    color: var(--text-color);
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 1rem;
+}
